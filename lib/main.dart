@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:inventory/AllScreen/loginScreen.dart';
 import 'package:inventory/AllScreen/HomeScreen.dart';
 import 'package:inventory/AllScreen/registration.dart';
+import 'package:inventory/ApiCall/pages/home.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,12 +33,13 @@ class Login extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       // home: Registration(),
-      initialRoute: MyHome.idScreen,
+      initialRoute: "/home",
 
       routes: {
         Registration.idScreen: (context) => Registration(),
         LoginScreen.idScreen: (context) => LoginScreen(),
         MyHome.idScreen: (context) => MyHome(),
+        "/home": ((context) => Home()),
       },
     );
   }

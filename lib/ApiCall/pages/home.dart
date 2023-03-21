@@ -1,73 +1,94 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:inventory/ApiCall/models/post_model.dart';
+import 'package:inventory/ApiCall/models/product.dart';
+import 'package:inventory/ApiCall/pages/create.dart';
 import 'package:inventory/ApiCall/pages/detail.dart';
-import 'package:inventory/ApiCall/services/postService.dart';
+import 'package:inventory/ApiCall/services/productService.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
 
   @override
-  State<Home> createState() => _HomeState();
+  _HomeState createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
-  late List<Post>? postModel = [];
+  late List<Product>? _productModel = [];
 
-  void getData() async {
-    postModel = (await PostService().getPosts())!;
+  void _getData() async {
+    // _userModel = (await ApiService().getUsers())!;
+    // _postsModel = (await ApiService().getPosts())!;
+    _productModel = (await ProductApiService().getProducts())!;
     Future.delayed(const Duration(seconds: 1)).then((value) => setState(() {}));
   }
 
   @override
   void initState() {
-    // TODO: implement initState
-
-    getData();
+    super.initState();
+    _getData();
   }
 
-  Widget getPostList(context) {
+  Widget _getProductList(context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text("Post"),
-          actions: [],
-        ),
-        body: postModel == null || postModel!.isEmpty
-            ? const Center(
-                child: CircularProgressIndicator(),
-              )
-            : Center(
-                // child: Text("List size is :" + "${postModel?.length}"),
-                child: ListView.builder(
-                    itemCount: postModel!.length,
-                    itemBuilder: (context, index) {
-                      // return Text(postModel![index].title.toString());
-                      return ListTile(
-                        leading: Icon(Icons.motion_photos_auto),
-                        title: Text(postModel![index].title.toString()),
-                        subtitle: Text(postModel![index].title.toString()),
-                        trailing: IconButton(
-                          onPressed: () {
-                            Navigator.pushAndRemoveUntil<dynamic>(
-                              context,
-                              MaterialPageRoute<dynamic>(
-                                builder: (BuildContext context) =>
-                                    Detail(post: postModel![index]),
-                              ),
-                              (route) => false,
-                            );
-                          },
-                          icon: Icon(Icons.accessibility_new),
-                        ),
-                        isThreeLine: true,
-                      );
-                    }),
-              ));
+      appBar: AppBar(
+        title: const Text('REST API Example for Post'),
+        actions: [
+          IconButton(
+              onPressed: () {
+                // goBack(context);
+              },
+              icon: Icon(Icons.arrow_back_ios_sharp)),
+          IconButton(
+              onPressed: () {
+                Navigator.pushAndRemoveUntil<dynamic>(
+                  context,
+                  MaterialPageRoute<dynamic>(
+                    builder: (BuildContext context) => FormApp(),
+                  ),
+                  (route) => false,
+                );
+              },
+              icon: Icon(Icons.create))
+        ],
+      ),
+      body: _productModel == null || _productModel!.isEmpty
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : Center(
+              child: ListView.builder(
+                itemCount: _productModel!.length,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    leading: FlutterLogo(size: 72.0),
+                    title: Text(_productModel![index].name.toString()),
+                    subtitle: Text(_productModel![index].email.toString()),
+                    trailing: IconButton(
+                      onPressed: () {
+                        Navigator.pushAndRemoveUntil<dynamic>(
+                          context,
+                          MaterialPageRoute<dynamic>(
+                            builder: (BuildContext context) =>
+                                Detail(product: _productModel![index]),
+                          ),
+                          (route) => false,
+                        );
+                      },
+                      icon: Icon(Icons.more_vert),
+                    ),
+                    isThreeLine: true,
+                  );
+                },
+              ),
+            ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return getPostList(context);
+    return _getProductList(context);
   }
 }
+
+// goBack(BuildContext context){
+//   Navigator.pop(context);
+// }

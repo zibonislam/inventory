@@ -33,14 +33,20 @@ class Login extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       // home: Registration(),
-      initialRoute: "/home",
+      initialRoute: "/login",
 
       routes: {
         Registration.idScreen: (context) => Registration(),
-        LoginScreen.idScreen: (context) => LoginScreen(),
+        // LoginScreen.idScreen: (context) => LoginScreen(),
+        "/login": ((context) => LoginScreen()),
         MyHome.idScreen: (context) => MyHome(),
         "/home": ((context) => Home()),
       },
     );
   }
 }
+
+Map<String, String> get headers => <String, String>{
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    };

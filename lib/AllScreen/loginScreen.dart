@@ -1,7 +1,15 @@
+import 'dart:convert';
+
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:inventory/AllScreen/HomeScreen.dart';
 import 'package:inventory/AllScreen/registration.dart';
+import 'package:http/http.dart' as http;
+import 'package:inventory/ApiCall/pages/detail.dart';
+import 'package:inventory/ApiCall/pages/home.dart';
+import 'package:inventory/main.dart';
 
 class LoginScreen extends StatelessWidget {
   // const LoginScreen({Key? key}) : super(key: key);
@@ -9,6 +17,48 @@ class LoginScreen extends StatelessWidget {
 
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final String login = 'http://192.168.20.203:8080/api/auth/signin';
+
+  void _login(BuildContext context) async {
+    if (emailController.text.isNotEmpty && passwordController.text.isNotEmpty) {
+      // var reqbody = {
+      //   "uesrmail": emailController.text,
+      //   "password": passwordController.text
+      // };
+
+      var reqBody = {
+        "username": emailController.text,
+        "password": passwordController.text,
+      };
+
+      var header = headers;
+
+      var response = await http.post(Uri.parse(login),
+          headers: header, body: jsonEncode(reqBody));
+
+      if (response.statusCode == 200) {
+        var jsonresponse = jsonDecode(response.body);
+
+        var myUser = jsonresponse['user'];
+        print("mytoken ---------------");
+        print(myUser);
+
+        var myToken = jsonresponse['jwtToken'];
+
+        final storage = const FlutterSecureStorage();
+
+        await storage.write(key: 'token', value: myToken);
+
+        Navigator.pushAndRemoveUntil<dynamic>(
+          context,
+          MaterialPageRoute<dynamic>(
+            builder: (BuildContext context) => MyHome(),
+          ),
+          (route) => false,
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -95,10 +145,11 @@ class LoginScreen extends StatelessWidget {
                           ),
                         ),
                         onPressed: () {
-                          print("User Email : " +
-                              emailController.text +
-                              " User Password : " +
-                              passwordController.text);
+                          // print("User Email : " +
+                          //     emailController.text +
+                          //     " User Password : " +
+                          //     passwordController.text);
+                          _login(context);
                         }),
                     SizedBox(
                       height: 4.0,
